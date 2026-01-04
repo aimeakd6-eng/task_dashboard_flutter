@@ -5,490 +5,199 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: DashboardPage(),
+      theme: ThemeData(
+        primarySwatch: Colors.orange,
+        scaffoldBackgroundColor: const Color(0xFFF8F9FA),
+      ),
+      home: const DashboardPage(),
     );
   }
 }
 
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  const DashboardPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F4F4),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text("Dashboard", style: TextStyle(color: Colors.black)),
-      ),
-
-      // ===== BODY =====
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _assistantHeader(),
-            _topCards(),
-            const SizedBox(height: 14),
-            _dotIndicator(),
-            const SizedBox(height: 14),
-            _taskProgressCard(),
-            _deadlinesCard(),
-            _taskTimelineCard(),
-            const SizedBox(height: 80), // espace pour la nav bar
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              headerSection(),
+              statsCardsSection(),
+              taskProgressSection(),
+              deadlinesSection(),
+              timelineSection(),
+              meetingsSection(),
+              const SizedBox(height: 80),
+            ],
+          ),
         ),
       ),
-
-      // ===== BOTTOM NAVIGATION =====
-      bottomNavigationBar: _bottomNavigationBar(),
+      bottomNavigationBar: bottomNavBar(),
     );
   }
 
-  // ---------------- HEADER ----------------
-
-  Widget _assistantHeader() {
+  // 👤 PARTIE 1 - HEADER
+  Widget headerSection() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          // Logo
+          const Text(
+            'M',
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           Row(
             children: [
-              const Icon(Icons.auto_awesome, color: Colors.orange),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Text("AI Assistant"),
+              IconButton(
+                icon: const Icon(Icons.notifications_outlined),
+                onPressed: () {},
+              ),
+              const CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.orange,
+                child: Icon(Icons.person, color: Colors.white),
               ),
             ],
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-            onPressed: () {},
-            child: const Text("New"),
-          ),
         ],
       ),
     );
   }
 
-  // ---------------- TOP CARDS ----------------
-
-  Widget _topCards() {
+  // 👤 PARTIE 1 - CARTES STATS
+  Widget statsCardsSection() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GridView.count(
-        crossAxisCount: 2,
-        childAspectRatio: 2.3,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        children: const [
-          InfoCard("Priority Task", "13/25", Colors.orange, Icons.flag),
-          InfoCard("Overdue Task", "12/20", Colors.red, Icons.warning),
-          InfoCard("Upcoming Task", "15/30", Colors.blue, Icons.schedule),
-          InfoCard("Pending Task", "20/35", Colors.purple, Icons.pending),
-        ],
-      ),
-    );
-  }
-
-  Widget _dotIndicator() {
-    return Container(
-      width: 8,
-      height: 8,
-      decoration: const BoxDecoration(
-        color: Colors.grey,
-        shape: BoxShape.circle,
-      ),
-    );
-  }
-
-  // ---------------- TASK PROGRESS ----------------
-
-  Widget _taskProgressCard() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Container(
-        height: 280,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  "Task Progress",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        children: [
+          // AI Assistant + New Button
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.grey.shade300),
                 ),
-                Icon(Icons.more_horiz),
-              ],
-            ),
-            Expanded(
-              child: Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      width: 130,
-                      height: 130,
-                      child: CircularProgressIndicator(
-                        value: 1,
-                        strokeWidth: 10,
-                        color: Colors.grey.shade300,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 130,
-                      height: 130,
-                      child: CircularProgressIndicator(
-                        value: 0.6,
-                        strokeWidth: 10,
-                        color: Colors.orange,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 130,
-                      height: 130,
-                      child: CircularProgressIndicator(
-                        value: 0.35,
-                        strokeWidth: 10,
-                        color: Colors.blue,
-                      ),
-                    ),
-                    const Text(
-                      "\$ 6.550",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                child: Row(
+                  children: const [
+                    Icon(Icons.auto_awesome, color: Colors.orange, size: 20),
+                    SizedBox(width: 8),
+                    Text('AI Assistant'),
                   ],
                 ),
               ),
-            ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                LegendDot(Colors.orange, "Completed"),
-                LegendDot(Colors.blue, "In Progress"),
-                LegendDot(Colors.grey, "Not Started"),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ---------------- DEADLINES ----------------
-
-  Widget _deadlinesCard() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          children: [
-            const Text(
-              "Deadlines",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            _deadlinePerson("Medical Website", "Project Brief", "On Progress"),
-            _deadlinePerson("Fluorenes Branding", "Project Brief", "Completed"),
-            _deadlinePerson(
-              "Call Analytics App",
-              "Project Brief",
-              "On Progress",
-            ),
-            _deadlinePerson("SaaS Landing Page", "Project Brief", "Completed"),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _deadlinePerson(String title, String subtitle, String status) {
-    final isCompleted = status == "Completed";
-    final bgColor = isCompleted
-        ? Colors.green.shade100
-        : Colors.orange.shade100;
-    final textColor = isCompleted ? Colors.green : Colors.orange;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF9F9F9),
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Row(
-          children: [
-            CircleAvatar(
-              backgroundColor: bgColor,
-              child: const Icon(Icons.person),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                status,
-                style: TextStyle(fontSize: 12, color: textColor),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ---------------- TASK TIMELINE ----------------
-
-  Widget _taskTimelineCard() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: const [
-                Text(
-                  "Tasks Timeline",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                Spacer(),
-                Icon(Icons.chevron_left),
-                SizedBox(width: 6),
-                Text("July, 2025", style: TextStyle(color: Colors.grey)),
-                SizedBox(width: 6),
-                Icon(Icons.chevron_right),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                _DayItem("20", "SUN"),
-                _DayItem("21", "MON", isActive: true),
-                _DayItem("22", "TUE"),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Container(
-              height: 220,
-              decoration: BoxDecoration(
-                color: const Color(0xFFF7F7F7),
-                borderRadius: BorderRadius.circular(14),
+                child: Row(
+                  children: const [
+                    Text('New', style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 4),
+                    Icon(Icons.keyboard_arrow_down, color: Colors.white, size: 18),
+                  ],
+                ),
               ),
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: 30,
-                    left: 16,
-                    child: _TimelineTask(
-                      title: "User Interview",
-                      status: "Pending",
-                      color: Colors.orange,
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 40,
-                    right: 16,
-                    child: _TimelineTask(
-                      title: "Wireframe Design",
-                      status: "Working",
-                      color: Colors.blue,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // 4 Cartes statistiques
+          Row(
+            children: [
+              Expanded(child: statCard('Priority Task', '13/25', true, Icons.flag)),
+              const SizedBox(width: 12),
+              Expanded(child: statCard('Overdue Task', '12/20', true, Icons.calendar_today)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(child: statCard('Upcoming Task', '15/30', false, Icons.upcoming)),
+              const SizedBox(width: 12),
+              Expanded(child: statCard('Pending Task', '20/35', false, Icons.access_time)),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  // ---------------- BOTTOM NAVIGATION ----------------
-
-  Widget _bottomNavigationBar() {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      currentIndex: 0,
-      selectedItemColor: Colors.orange,
-      unselectedItemColor: Colors.grey,
-      onTap: (index) {},
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-        BottomNavigationBarItem(icon: Icon(Icons.task_alt), label: "Tasks"),
-        BottomNavigationBarItem(
-          icon: CircleAvatar(
-            radius: 20,
-            backgroundColor: Colors.orange,
-            child: Icon(Icons.add, color: Colors.white),
-          ),
-          label: "",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_month),
-          label: "Calendar",
-        ),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-      ],
-    );
-  }
-}
-
-// ---------------- COMPONENTS ----------------
-
-class _DayItem extends StatelessWidget {
-  final String day;
-  final String label;
-  final bool isActive;
-
-  const _DayItem(this.day, this.label, {this.isActive = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          day,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isActive ? Colors.black : Colors.grey,
-          ),
-        ),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 11,
-            color: isActive ? Colors.black : Colors.grey,
-          ),
-        ),
-        if (isActive)
-          Container(
-            margin: const EdgeInsets.only(top: 4),
-            width: 6,
-            height: 6,
-            decoration: const BoxDecoration(
-              color: Colors.orange,
-              shape: BoxShape.circle,
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class InfoCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final Color color;
-  final IconData icon;
-
-  const InfoCard(this.title, this.value, this.color, this.icon, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final p = value.split('/');
-    final percent = ((int.parse(p[0]) / int.parse(p[1])) * 100).round();
-
+  Widget statCard(String title, String value, bool isPositive, IconData icon) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade200,
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, color: color, size: 18),
-              const SizedBox(width: 6),
+              Icon(icon, size: 16, color: Colors.grey),
+              const SizedBox(width: 8),
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
               ),
             ],
           ),
-          const Spacer(),
+          const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 value,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
+                  color: isPositive ? Colors.green.shade50 : Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text("$percent%", style: TextStyle(color: color)),
+                child: Row(
+                  children: [
+                    Icon(
+                      isPositive ? Icons.arrow_upward : Icons.arrow_downward,
+                      size: 12,
+                      color: isPositive ? Colors.green : Colors.red,
+                    ),
+                    Text(
+                      '10%',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: isPositive ? Colors.green : Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -496,73 +205,462 @@ class InfoCard extends StatelessWidget {
       ),
     );
   }
-}
 
-class LegendDot extends StatelessWidget {
-  final Color color;
-  final String text;
+  // 👤 PARTIE 2 - TASK PROGRESS
+  Widget taskProgressSection() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade200,
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Task Progress',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Icon(Icons.more_horiz, color: Colors.grey.shade400),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Center(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 180,
+                    height: 180,
+                    child: CustomPaint(
+                      painter: CircularProgressPainter(),
+                    ),
+                  ),
+                  const Column(
+                    children: [
+                      Text(
+                        '\$6,550',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                legendItem(Colors.orange, 'Completed'),
+                legendItem(Colors.yellow.shade700, 'In Progress'),
+                legendItem(Colors.purple, 'Not Started'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-  const LegendDot(this.color, this.text, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget legendItem(Color color, String label) {
     return Row(
       children: [
         Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
         ),
         const SizedBox(width: 6),
-        Text(text, style: const TextStyle(fontSize: 12)),
+        Text(
+          label,
+          style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+        ),
       ],
+    );
+  }
+
+  // 👤 PARTIE 3 - DEADLINES
+  Widget deadlinesSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade200,
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Deadlines',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Icon(Icons.more_horiz, color: Colors.grey.shade400),
+              ],
+            ),
+            const SizedBox(height: 16),
+            deadlineItem('Medical Website', 'Project Brief', 'On Progress', Colors.yellow.shade700),
+            deadlineItem('Fluorenes Branding', 'Project Brief', 'Completed', Colors.green),
+            deadlineItem('Call Analytics App', 'Project Brief', 'On Progress', Colors.yellow.shade700),
+            deadlineItem('SaaS Landing Page', 'Project Brief', 'Completed', Colors.green),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget deadlineItem(String title, String subtitle, String status, Color statusColor) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 20,
+            backgroundColor: Colors.orange.shade100,
+            child: const Icon(Icons.person, color: Colors.orange),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                Row(
+                  children: [
+                    Icon(Icons.link, size: 12, color: Colors.grey.shade400),
+                    const SizedBox(width: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: statusColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              status,
+              style: TextStyle(
+                fontSize: 11,
+                color: statusColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 👤 PARTIE 4 - TIMELINE
+  Widget timelineSection() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade200,
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Tasks Timeline',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  children: [
+                    Icon(Icons.chevron_left, color: Colors.grey.shade400),
+                    const Text('July, 2025'),
+                    Icon(Icons.chevron_right, color: Colors.grey.shade400),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                dateColumn('20', 'SUN'),
+                dateColumn('21', 'MON'),
+                dateColumn('22', 'TUE'),
+              ],
+            ),
+            const SizedBox(height: 20),
+            timelineTaskItem('User Interview', 'Pending', 2),
+            const SizedBox(height: 12),
+            timelineTaskItem('Wireframe Design', 'Working', 3),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget dateColumn(String day, String weekday) {
+    return Column(
+      children: [
+        Text(
+          day,
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          weekday,
+          style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+        ),
+      ],
+    );
+  }
+
+  Widget timelineTaskItem(String title, String status, int avatarCount) {
+    return Row(
+      children: [
+        Stack(
+          children: List.generate(
+            avatarCount,
+            (index) => Padding(
+              padding: EdgeInsets.only(left: index * 20.0),
+              child: CircleAvatar(
+                radius: 16,
+                backgroundColor: Colors.orange.shade100,
+                child: const Icon(Icons.person, size: 16, color: Colors.orange),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            status,
+            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // 👤 PARTIE 4 - MEETINGS
+  Widget meetingsSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade200,
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Meetings',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Icon(Icons.calendar_today_outlined, color: Colors.grey.shade400, size: 20),
+              ],
+            ),
+            const SizedBox(height: 16),
+            meetingItem('Meeting With Team', 'Zoom Meeting', '8:15 AM', Icons.videocam),
+            const SizedBox(height: 12),
+            meetingItem('Design Review', '', '9:00 AM', Icons.event_note),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget meetingItem(String title, String subtitle, String time, IconData icon) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: Colors.grey.shade600, size: 20),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              if (subtitle.isNotEmpty)
+                Text(
+                  subtitle,
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                ),
+            ],
+          ),
+        ),
+        Row(
+          children: [
+            Icon(Icons.access_time, size: 14, color: Colors.grey.shade400),
+            const SizedBox(width: 4),
+            Text(
+              time,
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // BOTTOM NAV BAR
+  Widget bottomNavBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade300,
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: const BoxDecoration(
+                color: Colors.orange,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.dashboard, color: Colors.white),
+            ),
+            Icon(Icons.inbox_outlined, color: Colors.grey.shade400),
+            Icon(Icons.view_agenda_outlined, color: Colors.grey.shade400),
+            Icon(Icons.people_outline, color: Colors.grey.shade400),
+            Icon(Icons.settings_outlined, color: Colors.grey.shade400),
+            Icon(Icons.help_outline, color: Colors.grey.shade400),
+          ],
+        ),
+      ),
     );
   }
 }
 
-class _TimelineTask extends StatelessWidget {
-  final String title;
-  final String status;
-  final Color color;
-
-  const _TimelineTask({
-    required this.title,
-    required this.status,
-    required this.color,
-  });
-
+// Custom Painter pour le graphique circulaire
+class CircularProgressPainter extends CustomPainter {
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 230,
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6),
-        ],
-      ),
-      child: Row(
-        children: [
-          const CircleAvatar(radius: 14, backgroundColor: Colors.grey),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(status, style: TextStyle(fontSize: 11, color: color)),
-          ),
-        ],
-      ),
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 20
+      ..strokeCap = StrokeCap.round;
+
+    // Orange (Completed) - 50%
+    paint.color = Colors.orange;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      -1.57, // -90 degrees
+      3.14, // 180 degrees (50%)
+      false,
+      paint,
+    );
+
+    // Yellow (In Progress) - 30%
+    paint.color = Colors.yellow.shade700;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      1.57, // 90 degrees
+      1.88, // 108 degrees (30%)
+      false,
+      paint,
+    );
+
+    // Purple (Not Started) - 20%
+    paint.color = Colors.purple;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      3.45, // 198 degrees
+      1.26, // 72 degrees (20%)
+      false,
+      paint,
     );
   }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
